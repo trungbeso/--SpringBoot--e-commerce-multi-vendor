@@ -3,9 +3,11 @@ package com.benjamin.service.impl;
 import com.benjamin.config.JwtProvider;
 import com.benjamin.domain.EUserRole;
 import com.benjamin.model.CartModel;
+import com.benjamin.model.SellerModel;
 import com.benjamin.model.UserModel;
 import com.benjamin.model.VerificationCode;
 import com.benjamin.repository.ICartRepository;
+import com.benjamin.repository.ISellerRepository;
 import com.benjamin.repository.IUserRepository;
 import com.benjamin.repository.IVerificationCodeRepository;
 import com.benjamin.request.LoginRequest;
@@ -32,6 +34,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.benjamin.domain.EUserRole.ROLE_CUSTOMER;
+import static com.benjamin.domain.EUserRole.ROLE_SELLER;
 import static com.benjamin.util.Constant.*;
 
 @Service
@@ -43,6 +46,7 @@ public class AuthService implements IAuthService {
     ICartRepository cartRepository;
     IEmailService emailService;
     IUserRepository userRepository;
+    ISellerRepository sellerRepository;
     PasswordEncoder passwordEncoder;
     JwtProvider jwtProvider;
     CustomUserService customUserService;
@@ -85,12 +89,20 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public void sentLoginOtp(String email) {
+    public void sentLoginOtp(String email, EUserRole role) {
         if (email.startsWith(SIGNING_PREFIX)){
             email = email.substring(SIGNING_PREFIX.length());
-            UserModel user = userRepository.findByEmail(email);
-            if (user == null) {
-                throw new RuntimeException("User not found with email: " + email);
+
+            if (role.equals(ROLE_SELLER)) {
+                SellerModel seller = sellerRepository.findByEmail(email);
+                if (seller == null) {
+                    throw new RuntimeException("Seller not found with email: " + email);
+                }
+            } else {
+                UserModel user = userRepository.findByEmail(email);
+                if (user == null) {
+                    throw new RuntimeException("User not found with email: " + email);
+                }
             }
         }
 
@@ -105,12 +117,13 @@ public class AuthService implements IAuthService {
                 .email(email)
                 .build();
         verificationCodeRepository.save(verificationCode);
+        String text = MAIL_OTP_TEXT + otp;
 
-        emailService.sendVerificationEmail(email, otp, MAIL_OTP_SUBJECT, MAIL_OTP_TEXT);
+        emailService.sendVerificationEmail(email, otp, MAIL_OTP_SUBJECT, text);
     }
 
     @Override
-    public AuthResponse login(LoginRequest request) {
+    public AuthResponse signing(LoginRequest request) {
         String username = request.getEmail();
         String otp = request.getOtp();
 
