@@ -1,8 +1,7 @@
 package com.benjamin.controller;
 
-import com.benjamin.model.UserModel;
-import com.benjamin.model.VerificationCode;
 import com.benjamin.repository.IUserRepository;
+import com.benjamin.request.LoginOtpRequest;
 import com.benjamin.request.LoginRequest;
 import com.benjamin.request.SignupRequest;
 import com.benjamin.response.ApiResponse;
@@ -43,8 +42,8 @@ public class AuthController {
     }
 
     @PostMapping("/sent/login-signup-otp")
-    public ResponseEntity<ApiResponse> sendOtpHandler(@RequestBody VerificationCode request) {
-        authService.sentLoginOtp(request.getEmail());
+    public ResponseEntity<ApiResponse> sendOtpHandler(@RequestBody LoginOtpRequest request) {
+        authService.sentLoginOtp(request.getEmail(), request.getRole()  );
 
         ApiResponse response = new ApiResponse();
         response.setMessage("OTP sent successfully");
@@ -54,7 +53,7 @@ public class AuthController {
 
     @PostMapping("/signing")
     public ResponseEntity<AuthResponse> loginHandler(@RequestBody LoginRequest request) {
-        AuthResponse response = authService.login(request);
+        AuthResponse response = authService.signing(request);
 
         return ResponseEntity.ok(response);
     }

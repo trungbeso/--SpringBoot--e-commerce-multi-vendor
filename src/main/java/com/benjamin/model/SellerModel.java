@@ -4,10 +4,7 @@ package com.benjamin.model;
 import com.benjamin.domain.EAccountStatus;
 import com.benjamin.domain.EUserRole;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import static com.benjamin.domain.EAccountStatus.PENDING_VERIFICATION;
 import static com.benjamin.domain.EUserRole.ROLE_SELLER;
@@ -15,6 +12,7 @@ import static com.benjamin.domain.EUserRole.ROLE_SELLER;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "sellers")
