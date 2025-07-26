@@ -2,6 +2,7 @@ package com.benjamin.service.impl;
 
 import com.benjamin.config.JwtProvider;
 import com.benjamin.domain.EAccountStatus;
+import com.benjamin.exception.SellerException;
 import com.benjamin.model.AddressModel;
 import com.benjamin.model.SellerModel;
 import com.benjamin.repository.IAddressRepository;
@@ -56,8 +57,8 @@ public class SellerService implements ISellerService {
     }
 
     @Override
-    public SellerModel getById(Long id) {
-        return sellerRepository.findById(id).orElseThrow(() -> new RuntimeException("Seller not found with id: " + id));
+    public SellerModel getById(Long id) throws SellerException {
+        return sellerRepository.findById(id).orElseThrow(() -> new SellerException("Seller not found with id: " + id));
     }
 
     @Override
@@ -75,7 +76,7 @@ public class SellerService implements ISellerService {
     }
 
     @Override
-    public SellerModel update(Long id, SellerModel seller) {
+    public SellerModel update(Long id, SellerModel seller) throws SellerException {
         SellerModel existingSeller = this.getById(id);
         if (seller.getSellerName() != null ){
             existingSeller.setSellerName(seller.getSellerName());
@@ -115,7 +116,7 @@ public class SellerService implements ISellerService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Long id) throws SellerException {
         SellerModel seller = this.getById(id);
         sellerRepository.delete(seller);
     }
@@ -128,7 +129,7 @@ public class SellerService implements ISellerService {
     }
 
     @Override
-    public SellerModel updateSellerAccountStatus(Long id, EAccountStatus status) {
+    public SellerModel updateSellerAccountStatus(Long id, EAccountStatus status) throws SellerException {
         SellerModel seller = this.getById(id);
         seller.setAccountStatus(status);
         return sellerRepository.save(seller);

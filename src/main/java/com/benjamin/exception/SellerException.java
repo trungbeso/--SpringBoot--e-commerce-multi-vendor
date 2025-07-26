@@ -1,6 +1,6 @@
 package com.benjamin.exception;
 
-public class SellerException extends RuntimeException {
+public class SellerException extends Exception {
     public SellerException(String message) {
         super(message);
     }

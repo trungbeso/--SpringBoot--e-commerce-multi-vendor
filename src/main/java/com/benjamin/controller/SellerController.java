@@ -2,6 +2,7 @@ package com.benjamin.controller;
 
 import com.benjamin.config.JwtProvider;
 import com.benjamin.domain.EAccountStatus;
+import com.benjamin.exception.SellerException;
 import com.benjamin.model.SellerModel;
 import com.benjamin.model.SellerReport;
 import com.benjamin.model.VerificationCode;
@@ -85,7 +86,7 @@ public class SellerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SellerModel> getSellerById(@PathVariable Long id) {
+    public ResponseEntity<SellerModel> getSellerById(@PathVariable Long id) throws SellerException {
         SellerModel seller = sellerService.getById(id);
         return new ResponseEntity<>(seller, HttpStatus.OK);
     }
@@ -112,14 +113,14 @@ public class SellerController {
     }
 
     @PatchMapping()
-    public ResponseEntity<SellerModel> updateSeller(@RequestHeader("Authorization") String jwt, @RequestBody SellerModel seller){
+    public ResponseEntity<SellerModel> updateSeller(@RequestHeader("Authorization") String jwt, @RequestBody SellerModel seller) throws SellerException {
         SellerModel profile = sellerService.getSellerProfile(jwt);
         SellerModel updatedSeller = sellerService.update(profile.getId(), seller);
         return ResponseEntity.ok(updatedSeller);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSeller(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSeller(@PathVariable Long id) throws SellerException {
         sellerService.delete(id);
         return ResponseEntity.noContent().build();
     }
