@@ -146,6 +146,11 @@ public class AuthService implements IAuthService {
 
     private Authentication authenticate(String username, String otp) {
         UserDetails user = customUserService.loadUserByUsername(username);
+
+        if (username.startsWith(SELLER_PREFIX)) {
+            username = username.substring(SELLER_PREFIX.length());
+        }
+
         if (user == null) {
             throw new BadCredentialsException("Invalid username");
         }
